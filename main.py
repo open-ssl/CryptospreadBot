@@ -40,7 +40,9 @@ def callback_inline(call):
     Проверяем все колбеки и в зависимости от выбранной секции, основная или админская, даем ему ответ на сообщение
     """
     if call.message:
-        if call.data in BotActualCommands.get_all_commands():
+        if call.data == call.data == BotActualCommands.MAIN_MENU:
+            start_command(call.message)
+        elif call.data in BotActualCommands.get_all_commands():
             if call.data == BotActualCommands.GET_ACCESS_KEY_COMMAND:
                 bot.send_message(call.message.chat.id, Message.CHECK_USER_FOR_CODE_MESSAGE)
                 create_code_for_user(call.message)
@@ -51,8 +53,6 @@ def callback_inline(call):
             elif call.data == BotActualCommands.USER_PAID_ACCESS:
                 message = bot.send_message(call.message.chat.id, Message.AFTER_USER_PAID_ACCESS)
                 bot.register_next_step_handler(message, user_inputed_data)
-            elif call.data == BotActualCommands.MAIN_MENU:
-                start_command(call.message)
         elif call.data in BotActualCommands.get_all_admin_commands():
             if call.data == BotActualCommands.ADMIN_SECTION:
                 create_admin_panel(call.message)
@@ -60,11 +60,17 @@ def callback_inline(call):
                 create_menu_for_adding_user(call.message)
             elif call.data == BotActualCommands.ANSWER_FOR_USER:
                 bot.send_message(call.message.chat.id, Message.ANSWER_FOR_USER_GREETING)
+            elif call.data == BotActualCommands.ADD_ACCESS_WITH_TELEGRAM:
+                message = bot.send_message(call.message.chat.id, Message.INPUT_TELEGRAM_USER_FOR_ACCESS)
+                bot.register_next_step_handler(message, create_access_for_user_by_admin, (Const.TELEGRAM, ))
+            elif call.data == BotActualCommands.ADD_ACCESS_WITH_EMAIL:
+                message = bot.send_message(call.message.chat.id, Message.INPUT_EMAIL_USER_FOR_ACCESS)
+                bot.register_next_step_handler(message, create_access_for_user_by_admin, (Const.EMAIL, ))
 
 
 def create_code_for_user(message):
     """
-    Генерим 16- значный код для юзера
+    Генерим 16-значный код для юзера
     Делаем запрос на сервис, который проверяет
     1. Есть ли такой юзер у нас в базе вообще
     2. Не генеририровали ли мы для пользователя код ранее
@@ -86,6 +92,29 @@ def create_code_for_user(message):
     except:
         log_error_in_file()
         bot.send_message(message.chat.id, Message.ERROR_MESSAGE)
+
+
+def create_access_for_user_by_admin(message, extra_args):
+    """
+    Админ нажал кнопку добавление юзера через телеграм или почту
+    :param message: обьект сессии сообщения после нажатия
+    :param extra_args: tuple: Обьект дополнительной информации
+    """
+    # Тип того, через что админ пытается добавить пользователя
+    access_type = extra_args[0]
+
+    inputed_data = message.html_text.strip()
+    sub_type, access_value = inputed_data.split()
+
+    json_data = {
+        Const.ADMIN_ID: message.chat.id,
+        Const.ADMIN_USERNAME: message.chat.username,
+        Const.ACCESS_TYPE: access_type,
+        Const.ACCESS_VALUE: access_value,
+        Const.SUB_TYPE: int(sub_type)
+    }
+    # todo запрос на сервер для добавления подписки пользователю
+    bot.send_message(message.chat.id, access_type)
 
 
 @bot.message_handler(content_types=['text'])

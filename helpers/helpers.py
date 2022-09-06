@@ -9,6 +9,8 @@ API_TOKEN = '5686307192:AAGWxHH_auacIqrN6gXK2F3cBKJnpFqdXyg'
 GENERATED_CODE_LENGTH = 16
 # CREATE_NEW_CODE_END_POINT = 'http://cryptospread.net/create_code_for_user'
 CREATE_NEW_CODE_END_POINT = 'http://127.0.0.1:5002/create_code_for_user'
+# CREATE_NEW_ACCESS_END_POINT = 'http://cryptospread.net/create_new_access'
+CREATE_NEW_ACCESS_END_POINT = 'http://127.0.0.1:5002/create_new_access'
 
 
 def log_error_in_file():
@@ -95,6 +97,8 @@ class BotActualCommands:
             cls.ADMIN_SECTION: Message.ADMIN_NAME,
             cls.ADD_ACCESS_FOR_USER: Message.ADD_SUB,
             cls.ANSWER_FOR_USER: Message.ANSWER_FOR_USERS,
+            cls.ADD_ACCESS_WITH_TELEGRAM: Message.ADD_WITH_TELEGRAM,
+            cls.ADD_ACCESS_WITH_EMAIL: Message.ADD_WITH_EMAIL
         }
 
     @classmethod
@@ -115,8 +119,16 @@ class BotActualCommands:
 class Const:
     GENERATED_CODE = 'generatedCode'
     TELEGRAM_USER = 'telegramUser'
+    EMAIL = 'email'
+    TELEGRAM = 'telegram'
+
     ORERATION_RESULT = 'operationResult'
     EXTRA_DATA = 'extraData'
+    ACCESS_TYPE = 'accessType'
+    ADMIN_USERNAME = 'adminUsername'
+    ADMIN_ID = 'adminId'
+    ACCESS_VALUE = 'accessValue'
+    SUB_TYPE = 'subType'
 
 
 class Creads:
@@ -126,7 +138,7 @@ class Creads:
     SLAVA_USERNAME = 'VyacheslavBabenko'
 
     @classmethod
-    def get_service_admins(cls):
+    def get_admins_сreads(cls):
         return {
             cls.STAS_ID: cls.STAS_USERNAME,
             cls.SLAVA_ID: cls.SLAVA_USERNAME
@@ -156,6 +168,10 @@ class Message:
     ANSWER_FOR_USER_GREETING = "Здесь будем отвечать пользователям с поддержки"
     AFTER_USER_PAID_ACCESS = "Введите, пожалуйста, имя юзера с которого производилась оплата.\n" \
                              "Мы проверим оплаченную вами сумму и в зависимости от ее количества выдадим вам нужный доступ"
+    INPUT_TELEGRAM_USER_FOR_ACCESS = "Введите тип подписки и телеграм никнейм юзера для добавления\n" \
+                                     "Пример: 1 NickName"
+    INPUT_EMAIL_USER_FOR_ACCESS = "Введите тип подписки и почту юзера для добавления\n" \
+                                  "Пример: 1 mail@mail.ru"
 
     ####################################################################
     GET_TRIAL_KEY = 'Получить пробный ключ'
@@ -176,7 +192,7 @@ def add_admin_config(message, keyboard):
     is_admin = False
     unknown_username = message.chat.username
     unknown_user_id = message.chat.id
-    admins = Creads.get_service_admins()
+    admins = Creads.get_admins_сreads()
 
     for admin_id, admin_username in admins.items():
         if unknown_user_id == admin_id and unknown_username == admin_username:
