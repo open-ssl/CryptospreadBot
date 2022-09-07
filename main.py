@@ -100,21 +100,29 @@ def create_access_for_user_by_admin(message, extra_args):
     :param message: обьект сессии сообщения после нажатия
     :param extra_args: tuple: Обьект дополнительной информации
     """
-    # Тип того, через что админ пытается добавить пользователя
-    access_type = extra_args[0]
+    try:
+        # Тип того, через что админ пытается добавить пользователя
+        access_type = extra_args[0]
 
-    inputed_data = message.html_text.strip()
-    sub_type, access_value = inputed_data.split()
+        inputed_data = message.html_text.strip()
+        sub_type, access_value = inputed_data.split()
 
-    json_data = {
-        Const.ADMIN_ID: message.chat.id,
-        Const.ADMIN_USERNAME: message.chat.username,
-        Const.ACCESS_TYPE: access_type,
-        Const.ACCESS_VALUE: access_value,
-        Const.SUB_TYPE: int(sub_type)
-    }
-    # todo запрос на сервер для добавления подписки пользователю
-    bot.send_message(message.chat.id, access_type)
+        json_data = {
+            Const.ADMIN_ID: message.chat.id,
+            Const.ADMIN_USERNAME: message.chat.username,
+            Const.ACCESS_TYPE: access_type,
+            Const.ACCESS_VALUE: access_value,
+            Const.SUB_TYPE: int(sub_type)
+        }
+
+        request_result = post_request(helpers.CREATE_NEW_ACCESS_END_POINT, json_data=json_data).json()
+        result_msg = Message.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
+        if not request_result.get(Const.ORERATION_RESULT):
+            result_msg = request_result.get(Const.EXTRA_DATA)
+        bot.send_message(message.chat.id, result_msg)
+    except Exception as e:
+        log_error_in_file()
+        bot.send_message(message.chat.id, Message.ERROR_MESSAGE)
 
 
 @bot.message_handler(content_types=['text'])
