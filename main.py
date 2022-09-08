@@ -119,6 +119,9 @@ def create_access_for_user_by_admin(message, extra_args):
         result_msg = Message.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
         if not request_result.get(Const.ORERATION_RESULT):
             result_msg = request_result.get(Const.EXTRA_DATA)
+        # todo
+        #  Вот здесь если успех надо отправить пользователю сообщение о том, что подписка для него оформлена.
+        #  для этого надо выкинуть с бека его телеграм айди
         bot.send_message(message.chat.id, result_msg)
     except Exception as e:
         log_error_in_file()
