@@ -119,6 +119,7 @@ class BotActualCommands:
 class Const:
     GENERATED_CODE = 'generatedCode'
     TELEGRAM_USER = 'telegramUser'
+    TELEGRAM_ID = 'telegramId'
     EMAIL = 'email'
     TELEGRAM = 'telegram'
 

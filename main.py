@@ -78,10 +78,12 @@ def create_code_for_user(message):
     """
     try:
         username = message.chat.username
+        user_id = message.chat.id
         new_generated_code = ''.join(choice(ascii_uppercase) for _ in range(helpers.GENERATED_CODE_LENGTH))
         json_data = {
             Const.GENERATED_CODE: new_generated_code,
-            Const.TELEGRAM_USER: username
+            Const.TELEGRAM_USER: username,
+            Const.TELEGRAM_ID: user_id
         }
         request_result = post_request(helpers.CREATE_NEW_CODE_END_POINT, json_data=json_data).json()
 
