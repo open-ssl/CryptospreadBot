@@ -124,7 +124,8 @@ class Const:
     TELEGRAM = 'telegram'
 
     ORERATION_RESULT = 'operationResult'
-    EXTRA_DATA = 'extraData'
+    ERROR_MESSAGE = 'errorMessage'
+    SUCCESS_MESSAGE = 'successMessage'
     ACCESS_TYPE = 'accessType'
     ADMIN_USERNAME = 'adminUsername'
     ADMIN_ID = 'adminId'

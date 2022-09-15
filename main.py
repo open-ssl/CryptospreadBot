@@ -89,7 +89,7 @@ def create_code_for_user(message):
 
         result_msg = Message.SUCCESS_GENERATED_CODE_MESSAGE.format(new_generated_code)
         if not request_result.get(Const.ORERATION_RESULT):
-            result_msg = request_result.get(Const.EXTRA_DATA)
+            result_msg = request_result.get(Const.ERROR_MESSAGE)
         bot.send_message(message.chat.id, result_msg)
     except:
         log_error_in_file()
@@ -120,11 +120,15 @@ def create_access_for_user_by_admin(message, extra_args):
         request_result = post_request(helpers.CREATE_NEW_ACCESS_END_POINT, json_data=json_data).json()
         result_msg = Message.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
         if not request_result.get(Const.ORERATION_RESULT):
-            result_msg = request_result.get(Const.EXTRA_DATA)
+            result_msg = request_result.get(Const.ERROR_MESSAGE)
         # todo
         #  Вот здесь если успех надо отправить пользователю сообщение о том, что подписка для него оформлена.
         #  для этого надо выкинуть с бека его телеграм айди
+        # todo update:
+        # айдишник вроде выкинул, но надо потестировать
+        telegram_id = result_msg.get(Const.TELEGRAM_ID)
         bot.send_message(message.chat.id, result_msg)
+
     except Exception as e:
         log_error_in_file()
         bot.send_message(message.chat.id, Message.ERROR_MESSAGE)
