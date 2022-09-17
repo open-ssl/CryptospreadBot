@@ -3,8 +3,13 @@
 import sys
 from time import sleep
 from traceback import print_exception
+from typing import Callable
 
+from telebot import types
 from requests_futures import sessions
+
+from bot_config import bot
+from helpers.constants import BotMessage, Creads
 
 
 def log_error_in_file():
@@ -37,3 +42,32 @@ def post_request(url, json_data):
             sleep(0.5)
 
     return request_result.result()
+
+
+def is_admin(message: types.Message) -> bool:
+    """
+    Возвращает  True, если пользователь - админ
+    """
+    unknown_username = message.chat.username
+    unknown_user_id = message.chat.id
+    admins = Creads.get_admins_creads()
+
+    for admin_id, admin_username in admins.items():
+        if unknown_user_id == admin_id and unknown_username == admin_username:
+            return True
+
+    return False
+
+
+def admin_action(func: Callable) -> Callable:
+    """
+    Декоратор, скрывающий функционал админки для обычных пользователей
+    Если пользователь не админ, напишем ему, что он ввел неизвестную команду
+    """
+    def wrapper(message: types.Message, *args, **kwargs) -> None:
+        if is_admin(message):
+            func(message, *args, **kwargs)
+        else:
+            bot.send_message(message.chat.id, BotMessage.UNKNOWN_ACTION_MESSAGE)
+
+    return wrapper

@@ -8,7 +8,7 @@ from telebot import types
 
 from bot_config import bot
 from helpers import helpers
-from helpers.constants import BotMessage, Const, Creads, UserMessage
+from helpers.constants import BotMessage, Const, UserMessage
 
 
 @bot.message_handler(commands=['start'])
@@ -78,6 +78,7 @@ def create_menu_for_pay_info(message: types.Message) -> None:
     bot.send_message(message.chat.id, BotMessage.BUY_ACCESS_MESSAGE, reply_markup=keyboard)
 
 
+@helpers.admin_action
 def ensure_payment(message: types.Message) -> None:
     """
     Убедимся, что пользователь заплатил
@@ -86,6 +87,7 @@ def ensure_payment(message: types.Message) -> None:
     bot.send_message(message.chat.id, BotMessage.SAMPLE_TEXT)
 
 
+@helpers.admin_action
 def create_admin_panel(message: types.Message) -> None:
     """
     Кликнули по кнопке Админка
@@ -98,8 +100,8 @@ def create_admin_panel(message: types.Message) -> None:
     bot.send_message(message.chat.id, BotMessage.ADMIN_SECTION_GREETING, reply_markup=keyboard)
 
 
-
-def create_menu_for_adding_user(message):
+@helpers.admin_action
+def create_menu_for_adding_user(message: types.Message) -> None:
     """
     Нажали на Добавить подписку для пользователя
     return: Выдаем меню выбора через что добавляем - Телега или Почта
@@ -111,7 +113,8 @@ def create_menu_for_adding_user(message):
     bot.send_message(message.chat.id, BotMessage.ADD_ACCESS_FOR_USER_GREETING, reply_markup=keyboard)
 
 
-def create_access_for_user_by_admin(message, extra_args):
+@helpers.admin_action
+def create_access_for_user_by_admin(message: types.Message, extra_args: tuple) -> None:
     """
     Админ нажал кнопку добавление юзера через телеграм или почту
     :param message: обьект сессии сообщения после нажатия
@@ -153,22 +156,12 @@ def create_access_for_user_by_admin(message, extra_args):
         bot.send_message(message.chat.id, BotMessage.ERROR_MESSAGE)
 
 
-def add_admin_config(message, keyboard):
+@helpers.admin_action
+def add_admin_config(message: types.Message, keyboard: types.ReplyKeyboardMarkup) -> None:
     """
     Добавляет кнопку Админка (при необходимости)
     """
-    is_admin = False
-    unknown_username = message.chat.username
-    unknown_user_id = message.chat.id
-    admins = Creads.get_admins_creads()
-
-    for admin_id, admin_username in admins.items():
-        if unknown_user_id == admin_id and unknown_username == admin_username:
-            is_admin = True
-            break
-
-    if is_admin:
-        keyboard.add(types.KeyboardButton(text=UserMessage.ADMIN_NAME))
+    keyboard.add(types.KeyboardButton(text=UserMessage.ADMIN_NAME))
 
 
 HANDLER_MAP = {
