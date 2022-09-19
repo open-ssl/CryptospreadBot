@@ -126,7 +126,8 @@ def create_access_for_user_by_admin(message, extra_args):
         #  для этого надо выкинуть с бека его телеграм айди
         # todo update:
         # айдишник вроде выкинул, но надо потестировать
-        telegram_id = result_msg.get(Const.TELEGRAM_ID)
+        telegram_id = request_result.get(Const.TELEGRAM_ID)
+        user_id = request_result.get(Const.USER_ID)
         bot.send_message(message.chat.id, result_msg)
 
     except Exception as e:

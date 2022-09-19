@@ -120,6 +120,7 @@ class Const:
     GENERATED_CODE = 'generatedCode'
     TELEGRAM_USER = 'telegramUser'
     TELEGRAM_ID = 'telegramId'
+    USER_ID = 'userId'
     EMAIL = 'email'
     TELEGRAM = 'telegram'
 
@@ -159,7 +160,8 @@ class Message:
                          "Мы проверим оплаченную вами сумму и в зависимости от ее количества выдадим вам нужный доступ\n" \
                          "\nПосле оплаты нажмите на кнопку 'Оплачено'"
     CHECK_USER_FOR_CODE_MESSAGE = "Делаем проверку Вашего юзера для выдачи кода..."
-    WRITE_DEVELOPERS_MESSAGE = "Напишите нам и мы Вам обязательно ответим в ближайшее время!"
+    WRITE_DEVELOPERS_MESSAGE = "Напишите нам и мы Вам обязательно ответим в ближайшее время!\n" \
+                               "Аккаунт поддержки - @CryptospreadNetSupport"
     SUCCESS_GENERATED_CODE_MESSAGE = "Для вас сгенерирован код для одного дня бесплатного доступа!\n" \
                                      "Ваш код - {0} \n" \
                                      "Активируйте его в личном кабинете"
