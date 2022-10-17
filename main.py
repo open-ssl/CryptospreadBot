@@ -2,18 +2,20 @@ import telebot
 from telebot import types
 from random import choice
 from string import ascii_uppercase
+from functools import partial
 
 from helpers import helpers
 from helpers.helpers import (
     Const,
     BotActualCommands,
-    Message,
     post_request,
     log_error_in_file,
-    add_admin_config
 )
 
+from helpers.constants import BotMessage
+
 bot = telebot.TeleBot(helpers.API_TOKEN)
+SUPPORT_URL = 'https://t.me/CryptospreadNetSupport'
 
 
 @bot.message_handler(commands=['start'])
@@ -27,11 +29,16 @@ def start_command(message):
     keyboard = types.InlineKeyboardMarkup()
     bot_actual_commands = BotActualCommands.get_main_menu_commands()
     for callback_command, command_text in bot_actual_commands.items():
-        keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command))
+        keyboard_button = partial(types.InlineKeyboardButton, text=command_text,
+                                  callback_data=callback_command, url=None)
+        if callback_command == BotActualCommands.WRITE_DEVELOPERS_COMMAND:
+            keyboard.add(keyboard_button(url=SUPPORT_URL))
+            continue
+        keyboard.add(keyboard_button())
 
-    add_admin_config(message, keyboard)
+    # add_admin_config(message, keyboard)
 
-    bot.send_message(message.chat.id, Message.START_BOT_MESSAGE.format(user_first_name), reply_markup=keyboard)
+    bot.send_message(message.chat.id, BotMessage.START_BOT_MESSAGE.format(user_first_name), reply_markup=keyboard)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -44,27 +51,27 @@ def callback_inline(call):
             start_command(call.message)
         elif call.data in BotActualCommands.get_all_commands():
             if call.data == BotActualCommands.GET_ACCESS_KEY_COMMAND:
-                bot.send_message(call.message.chat.id, Message.CHECK_USER_FOR_CODE_MESSAGE)
+                bot.send_message(call.message.chat.id, BotMessage.CHECK_USER_FOR_CODE_MESSAGE)
                 create_code_for_user(call.message)
             elif call.data == BotActualCommands.BUY_ACCESS_COMMAND:
                 create_menu_for_pay_info(call.message)
             elif call.data == BotActualCommands.WRITE_DEVELOPERS_COMMAND:
-                bot.send_message(call.message.chat.id, Message.WRITE_DEVELOPERS_MESSAGE)
+                bot.send_message(call.message.chat.id, BotMessage.WRITE_DEVELOPERS_MESSAGE)
             elif call.data == BotActualCommands.USER_PAID_ACCESS:
-                message = bot.send_message(call.message.chat.id, Message.AFTER_USER_PAID_ACCESS)
-                bot.register_next_step_handler(message, user_inputed_data)
+                message = bot.send_message(call.message.chat.id, BotMessage.AFTER_USER_PAID_ACCESS)
+                # bot.register_next_step_handler(message, user_inputed_data)
         elif call.data in BotActualCommands.get_all_admin_commands():
             if call.data == BotActualCommands.ADMIN_SECTION:
                 create_admin_panel(call.message)
             elif call.data == BotActualCommands.ADD_ACCESS_FOR_USER:
                 create_menu_for_adding_user(call.message)
             elif call.data == BotActualCommands.ANSWER_FOR_USER:
-                bot.send_message(call.message.chat.id, Message.ANSWER_FOR_USER_GREETING)
+                bot.send_message(call.message.chat.id, BotMessage.ANSWER_FOR_USER_GREETING)
             elif call.data == BotActualCommands.ADD_ACCESS_WITH_TELEGRAM:
-                message = bot.send_message(call.message.chat.id, Message.INPUT_TELEGRAM_USER_FOR_ACCESS)
+                message = bot.send_message(call.message.chat.id, BotMessage.INPUT_TELEGRAM_USER_FOR_ACCESS)
                 bot.register_next_step_handler(message, create_access_for_user_by_admin, (Const.TELEGRAM, ))
             elif call.data == BotActualCommands.ADD_ACCESS_WITH_EMAIL:
-                message = bot.send_message(call.message.chat.id, Message.INPUT_EMAIL_USER_FOR_ACCESS)
+                message = bot.send_message(call.message.chat.id, BotMessage.INPUT_EMAIL_USER_FOR_ACCESS)
                 bot.register_next_step_handler(message, create_access_for_user_by_admin, (Const.EMAIL, ))
 
 
@@ -87,13 +94,13 @@ def create_code_for_user(message):
         }
         request_result = post_request(helpers.CREATE_NEW_CODE_END_POINT, json_data=json_data).json()
 
-        result_msg = Message.SUCCESS_GENERATED_CODE_MESSAGE.format(new_generated_code)
+        result_msg = BotMessage.SUCCESS_GENERATED_CODE_MESSAGE.format(new_generated_code)
         if not request_result.get(Const.ORERATION_RESULT):
             result_msg = request_result.get(Const.ERROR_MESSAGE)
         bot.send_message(message.chat.id, result_msg)
     except:
         log_error_in_file()
-        bot.send_message(message.chat.id, Message.ERROR_MESSAGE)
+        bot.send_message(message.chat.id, BotMessage.ERROR_MESSAGE)
 
 
 def create_access_for_user_by_admin(message, extra_args):
@@ -118,7 +125,7 @@ def create_access_for_user_by_admin(message, extra_args):
         }
 
         request_result = post_request(helpers.CREATE_NEW_ACCESS_END_POINT, json_data=json_data).json()
-        result_msg = Message.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
+        result_msg = BotMessage.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
         if not request_result.get(Const.ORERATION_RESULT):
             result_msg = request_result.get(Const.ERROR_MESSAGE)
         # todo
@@ -132,7 +139,7 @@ def create_access_for_user_by_admin(message, extra_args):
 
     except Exception as e:
         log_error_in_file()
-        bot.send_message(message.chat.id, Message.ERROR_MESSAGE)
+        bot.send_message(message.chat.id, BotMessage.ERROR_MESSAGE)
 
 
 @bot.message_handler(content_types=['text'])
@@ -141,10 +148,9 @@ def start(message):
     Чекаем все сообщения от пользователя
     """
     if message.text != '/start':
-        bot.send_message(message.from_user.id, Message.UNKNOWN_ACTION_MESSAGE)
+        bot.send_message(message.from_user.id, BotMessage.UNKNOWN_ACTION_MESSAGE)
 
 
-# admin's section
 def create_admin_panel(message):
     """
     Кликнули по кнопке Админка
@@ -155,7 +161,7 @@ def create_admin_panel(message):
     for callback_command, command_text in bot_actual_commands.items():
         keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command))
 
-    bot.send_message(message.chat.id, Message.ADMIN_SECTION_GREETING, reply_markup=keyboard)
+    bot.send_message(message.chat.id, BotMessage.ADMIN_SECTION_GREETING, reply_markup=keyboard)
 
 
 def create_menu_for_adding_user(message):
@@ -168,19 +174,24 @@ def create_menu_for_adding_user(message):
     for callback_command, command_text in bot_actual_commands.items():
         keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command))
 
-    bot.send_message(message.chat.id, Message.ADD_ACCESS_FOR_USER_GREETING, reply_markup=keyboard)
+    bot.send_message(message.chat.id, BotMessage.ADD_ACCESS_FOR_USER_GREETING, reply_markup=keyboard)
 
 
 def create_menu_for_pay_info(message):
     keyboard = types.InlineKeyboardMarkup()
     bot_actual_commands = BotActualCommands.get_commands_for_pay()
     for callback_command, command_text in bot_actual_commands.items():
-        keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command))
-    bot.send_message(message.chat.id, Message.BUY_ACCESS_MESSAGE, reply_markup=keyboard)
+        keyboard_button = partial(types.InlineKeyboardButton, text=command_text, callback_data=callback_command, url=None)
+        if callback_command == BotActualCommands.USER_PAID_ACCESS:
+            keyboard.add(keyboard_button(url=SUPPORT_URL))
+            continue
+        keyboard.add(keyboard_button())
+
+    bot.send_message(message.chat.id, BotMessage.BUY_ACCESS_MESSAGE, reply_markup=keyboard)
 
 
-def user_inputed_data(message):
-    bot.send_message(message.chat.id, 'Спасибо, что что-то ввели')
+# def user_inputed_data(message):
+#     bot.send_message(message.chat.id, 'Спасибо, что что-то ввели')
 
 
 if __name__ == '__main__':
