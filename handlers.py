@@ -156,12 +156,12 @@ def create_access_for_user_by_admin(message: types.Message, extra_args: tuple) -
         bot.send_message(message.chat.id, BotMessage.ERROR_MESSAGE)
 
 
-@helpers.admin_action
-def add_admin_config(message: types.Message, keyboard: types.ReplyKeyboardMarkup) -> None:
-    """
-    Добавляет кнопку Админка (при необходимости)
-    """
-    keyboard.add(types.KeyboardButton(text=UserMessage.ADMIN_NAME))
+# @helpers.admin_action
+# def add_admin_config(message: types.Message, keyboard: types.ReplyKeyboardMarkup) -> None:
+#     """
+#     Добавляет кнопку Админка (при необходимости)
+#     """
+#     keyboard.add(types.KeyboardButton(text=UserMessage.ADMIN_NAME))
 
 
 HANDLER_MAP = {
@@ -170,7 +170,7 @@ HANDLER_MAP = {
     UserMessage.BUY_ACCESS: create_menu_for_pay_info,
     UserMessage.WRITE_US: partial(custom_send_message, text=BotMessage.WRITE_DEVELOPERS_MESSAGE),
     UserMessage.USER_PAID_ACCESS: ensure_payment,
-    UserMessage.ADMIN_NAME: create_admin_panel,
+    # UserMessage.ADMIN_NAME: create_admin_panel,
     UserMessage.ADD_SUB: create_menu_for_adding_user,
     UserMessage.ANSWER_FOR_USERS: partial(custom_send_message, text=BotMessage.ANSWER_FOR_USER_GREETING),
     UserMessage.ADD_WITH_TELEGRAM: partial(create_access_for_user_by_admin, extra_args=(Const.TELEGRAM, )),
