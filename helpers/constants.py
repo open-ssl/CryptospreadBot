@@ -25,6 +25,8 @@ class Creads:
     SLAVA_USERNAME = 'VyacheslavBabenko'
     ALEX_ID = 369618248
     ALEX_USERNAME = 'Petryanin'
+    SEREGA_ID = 588138669
+    SEREGA_USERNAME = 'Ironixtemplar'
 
     @classmethod
     def get_admins_creads(cls):
@@ -32,6 +34,7 @@ class Creads:
             cls.STAS_ID: cls.STAS_USERNAME,
             cls.SLAVA_ID: cls.SLAVA_USERNAME,
             cls.ALEX_ID: cls.ALEX_USERNAME,
+            cls.SEREGA_ID: cls.SEREGA_USERNAME,
         }
 
 
