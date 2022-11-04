@@ -140,7 +140,7 @@ def create_access_for_user_by_admin(message: types.Message, extra_args: tuple) -
         }
 
         request_result = helpers.post_request(helpers.CREATE_NEW_ACCESS_END_POINT, json_data=json_data).json()
-        result_msg = BotMessage.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
+        result_msg = BotMessage.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value, sub_type)
         if not request_result.get(Const.ORERATION_RESULT):
             result_msg = request_result.get(Const.ERROR_MESSAGE)
         # todo
@@ -172,7 +172,7 @@ HANDLER_MAP = {
     UserMessage.USER_PAID_ACCESS: ensure_payment,
     # UserMessage.ADMIN_NAME: create_admin_panel,
     UserMessage.ADD_SUB: create_menu_for_adding_user,
-    UserMessage.ANSWER_FOR_USERS: partial(custom_send_message, text=BotMessage.ANSWER_FOR_USER_GREETING),
+    # UserMessage.ANSWER_FOR_USERS: partial(custom_send_message, text=BotMessage.ANSWER_FOR_USER_GREETING),
     UserMessage.ADD_WITH_TELEGRAM: partial(create_access_for_user_by_admin, extra_args=(Const.TELEGRAM, )),
     UserMessage.ADD_WITH_EMAIL: partial(create_access_for_user_by_admin, extra_args=(Const.EMAIL, )),
     UserMessage.CANCEL: create_admin_panel,

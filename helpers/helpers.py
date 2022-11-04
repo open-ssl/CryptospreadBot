@@ -8,10 +8,11 @@ from requests_futures import sessions
 
 API_TOKEN = '5686307192:AAGWxHH_auacIqrN6gXK2F3cBKJnpFqdXyg'
 GENERATED_CODE_LENGTH = 16
-CREATE_NEW_CODE_END_POINT = 'http://cryptospread.net/create_code_for_user'
-# CREATE_NEW_CODE_END_POINT = 'http://127.0.0.1:5002/create_code_for_user'
-CREATE_NEW_ACCESS_END_POINT = 'http://cryptospread.net/create_new_access'
-# CREATE_NEW_ACCESS_END_POINT = 'http://127.0.0.1:5002/create_new_access'
+# закомментированное для дебага
+CREATE_NEW_CODE_END_POINT = 'http://lk.cryptospread.net/create_code_for_user'
+# CREATE_NEW_CODE_END_POINT = 'http://127.0.0.1:5000/create_code_for_user'
+CREATE_NEW_ACCESS_END_POINT = 'http://lk.cryptospread.net/create_new_access'
+# CREATE_NEW_ACCESS_END_POINT = 'http://127.0.0.1:5000/create_new_access'
 
 
 def log_error_in_file():
@@ -97,7 +98,7 @@ class BotActualCommands:
         return {
             cls.ADMIN_SECTION: BotMessage.ADMIN_NAME,
             cls.ADD_ACCESS_FOR_USER: BotMessage.ADD_SUB,
-            cls.ANSWER_FOR_USER: BotMessage.ANSWER_FOR_USERS,
+            # cls.ANSWER_FOR_USER: BotMessage.ANSWER_FOR_USERS,
             cls.ADD_ACCESS_WITH_TELEGRAM: BotMessage.ADD_WITH_TELEGRAM,
             cls.ADD_ACCESS_WITH_EMAIL: BotMessage.ADD_WITH_EMAIL
         }
@@ -106,7 +107,7 @@ class BotActualCommands:
     def get_admin_commands_level2(cls):
         return {
             cls.ADD_ACCESS_FOR_USER: BotMessage.ADD_SUB,
-            cls.ANSWER_FOR_USER: BotMessage.ANSWER_FOR_USERS,
+            # cls.ANSWER_FOR_USER: BotMessage.ANSWER_FOR_USERS,
         }
 
     @classmethod
@@ -139,12 +140,15 @@ class Creads:
     STAS_USERNAME = 'Stanislav_Lukyanov'
     SLAVA_ID = 136756107
     SLAVA_USERNAME = 'VyacheslavBabenko'
+    SEREGA_ID = 588138669
+    SEREGA_USERNAME = 'Ironixtemplar'
 
     @classmethod
     def get_admins_сreads(cls):
         return {
             cls.STAS_ID: cls.STAS_USERNAME,
-            cls.SLAVA_ID: cls.SLAVA_USERNAME
+            cls.SLAVA_ID: cls.SLAVA_USERNAME,
+            cls.SEREGA_ID: cls.SEREGA_USERNAME
         }
 
 
