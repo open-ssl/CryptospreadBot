@@ -3,6 +3,7 @@ from telebot import types
 from random import choice
 from string import ascii_uppercase
 from functools import partial
+from helpers.helpers import add_admin_config
 
 from helpers import helpers
 from helpers.helpers import (
@@ -36,7 +37,7 @@ def start_command(message):
             continue
         keyboard.add(keyboard_button())
 
-    # add_admin_config(message, keyboard)
+    add_admin_config(message, keyboard)
 
     bot.send_message(message.chat.id, BotMessage.START_BOT_MESSAGE.format(user_first_name), reply_markup=keyboard)
 
@@ -125,9 +126,10 @@ def create_access_for_user_by_admin(message, extra_args):
         }
 
         request_result = post_request(helpers.CREATE_NEW_ACCESS_END_POINT, json_data=json_data).json()
-        result_msg = BotMessage.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value)
+        result_msg = BotMessage.SUCCESS_ACCESS_FOR_USER.format(access_type, access_value, sub_type)
         if not request_result.get(Const.ORERATION_RESULT):
             result_msg = request_result.get(Const.ERROR_MESSAGE)
+        """
         # todo
         #  Вот здесь если успех надо отправить пользователю сообщение о том, что подписка для него оформлена.
         #  для этого надо выкинуть с бека его телеграм айди
@@ -135,6 +137,7 @@ def create_access_for_user_by_admin(message, extra_args):
         # айдишник вроде выкинул, но надо потестировать
         telegram_id = request_result.get(Const.TELEGRAM_ID)
         user_id = request_result.get(Const.USER_ID)
+        """
         bot.send_message(message.chat.id, result_msg)
 
     except Exception as e:
@@ -194,5 +197,5 @@ def create_menu_for_pay_info(message):
 #     bot.send_message(message.chat.id, 'Спасибо, что что-то ввели')
 
 
-if __name__ == '__main__':
-    bot.polling(none_stop=True)
+# if __name__ == '__main__':
+#     bot.polling(none_stop=True)
