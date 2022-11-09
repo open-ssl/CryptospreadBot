@@ -198,4 +198,4 @@ def create_menu_for_pay_info(message):
 
 
 if __name__ == '__main__':
-    bot.infinity_polling(True)
+    bot.polling(none_stop=True)
