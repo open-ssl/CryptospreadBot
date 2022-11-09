@@ -197,5 +197,5 @@ def create_menu_for_pay_info(message):
 #     bot.send_message(message.chat.id, 'Спасибо, что что-то ввели')
 
 
-# if __name__ == '__main__':
-#     bot.polling(none_stop=True)
+if __name__ == '__main__':
+    bot.infinity_polling(True)
