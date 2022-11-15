@@ -17,6 +17,7 @@ from helpers.constants import BotMessage
 
 bot = telebot.TeleBot(helpers.API_TOKEN)
 SUPPORT_URL = 'https://t.me/CryptospreadNetSupport'
+CRYPTOSPREAD_MAIN = 'https://lk.cryptospread.net'
 
 
 @bot.message_handler(commands=['start'])
@@ -48,7 +49,7 @@ def callback_inline(call):
     Проверяем все колбеки и в зависимости от выбранной секции, основная или админская, даем ему ответ на сообщение
     """
     if call.message:
-        if call.data == call.data == BotActualCommands.MAIN_MENU:
+        if call.data == BotActualCommands.MAIN_MENU:
             start_command(call.message)
         elif call.data in BotActualCommands.get_all_commands():
             if call.data == BotActualCommands.GET_ACCESS_KEY_COMMAND:
@@ -93,12 +94,22 @@ def create_code_for_user(message):
             Const.TELEGRAM_USER: username,
             Const.TELEGRAM_ID: user_id
         }
-        request_result = post_request(helpers.CREATE_NEW_CODE_END_POINT, json_data=json_data).json()
+        request_result = post_request(helpers.CREATE_NEW_CODE_END_POINT, json_data=json_data)
+        request_result = request_result.json()
 
         result_msg = BotMessage.SUCCESS_GENERATED_CODE_MESSAGE.format(new_generated_code)
         if not request_result.get(Const.ORERATION_RESULT):
             result_msg = request_result.get(Const.ERROR_MESSAGE)
         bot.send_message(message.chat.id, result_msg)
+
+        keyboard = types.InlineKeyboardMarkup()
+        keyboard_commands = BotActualCommands.get_generate_code_menu()
+        for callback_command, command_text in keyboard_commands.items():
+            if callback_command == BotActualCommands.GO_TO_CRYPTOSPREAD:
+                keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command, url=CRYPTOSPREAD_MAIN))
+                continue
+            keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command))
+        bot.send_message(message.chat.id, BotMessage.NEXT_SECTION_GREETING, reply_markup=keyboard)
     except:
         log_error_in_file()
         bot.send_message(message.chat.id, BotMessage.ERROR_MESSAGE)
@@ -164,7 +175,7 @@ def create_admin_panel(message):
     for callback_command, command_text in bot_actual_commands.items():
         keyboard.add(types.InlineKeyboardButton(text=command_text, callback_data=callback_command))
 
-    bot.send_message(message.chat.id, BotMessage.ADMIN_SECTION_GREETING, reply_markup=keyboard)
+    bot.send_message(message.chat.id, BotMessage.NEXT_SECTION_GREETING, reply_markup=keyboard)
 
 
 def create_menu_for_adding_user(message):

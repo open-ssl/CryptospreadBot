@@ -9,9 +9,9 @@ from requests_futures import sessions
 API_TOKEN = '5686307192:AAGWxHH_auacIqrN6gXK2F3cBKJnpFqdXyg'
 GENERATED_CODE_LENGTH = 16
 # закомментированное для дебага
-CREATE_NEW_CODE_END_POINT = 'http://lk.cryptospread.net/create_code_for_user'
+CREATE_NEW_CODE_END_POINT = 'https://lk.cryptospread.net/create_code_for_user'
 # CREATE_NEW_CODE_END_POINT = 'http://127.0.0.1:5000/create_code_for_user'
-CREATE_NEW_ACCESS_END_POINT = 'http://lk.cryptospread.net/create_new_access'
+CREATE_NEW_ACCESS_END_POINT = 'https://lk.cryptospread.net/create_new_access'
 # CREATE_NEW_ACCESS_END_POINT = 'http://127.0.0.1:5000/create_new_access'
 
 
@@ -38,7 +38,7 @@ def post_request(url, json_data):
 
     while True:
         try:
-            request_result = session.post(url, json=json_data)
+            request_result = session.post(url, json=json_data, verify=False)
             break
         except Exception as e:
             print('Unknown error %s' % e)
@@ -53,6 +53,7 @@ class BotActualCommands:
     BUY_ACCESS_COMMAND = 'buy_access'
     USER_PAID_ACCESS = 'user_paid_access'
     MAIN_MENU = 'main_menu'
+    GO_TO_CRYPTOSPREAD = 'go_to_cryptospread'
     #######################################################
     # admin section
     ADMIN_SECTION = 'admin_section'
@@ -107,6 +108,14 @@ class BotActualCommands:
     def get_admin_commands_level2(cls):
         return {
             cls.ADD_ACCESS_FOR_USER: BotMessage.ADD_SUB,
+            # cls.ANSWER_FOR_USER: BotMessage.ANSWER_FOR_USERS,
+        }
+
+    @classmethod
+    def get_generate_code_menu(cls):
+        return {
+            cls.MAIN_MENU: BotMessage.MAIN_MENU,
+            cls.GO_TO_CRYPTOSPREAD: BotMessage.GO_TO_CRYPTOSPREAD
             # cls.ANSWER_FOR_USER: BotMessage.ANSWER_FOR_USERS,
         }
 

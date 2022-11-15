@@ -54,7 +54,8 @@ def create_code_for_user(message: types.Message) -> None:
             Const.TELEGRAM_USER: username,
             Const.TELEGRAM_ID: user_id
         }
-        request_result = helpers.post_request(helpers.CREATE_NEW_CODE_END_POINT, json_data=json_data).json()
+        request_result = helpers.post_request(helpers.CREATE_NEW_CODE_END_POINT, json_data=json_data)
+        request_result = request_result.json()
 
         result_msg = BotMessage.SUCCESS_GENERATED_CODE_MESSAGE.format(new_generated_code)
         if not request_result.get(Const.ORERATION_RESULT):
@@ -97,7 +98,7 @@ def create_admin_panel(message: types.Message) -> None:
     for command_text in UserMessage.get_main_admin_commands():
         keyboard.add(types.KeyboardButton(text=command_text))
 
-    bot.send_message(message.chat.id, BotMessage.ADMIN_SECTION_GREETING, reply_markup=keyboard)
+    bot.send_message(message.chat.id, BotMessage.NEXT_SECTION_GREETING, reply_markup=keyboard)
 
 
 @helpers.admin_action
