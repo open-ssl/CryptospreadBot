@@ -6,7 +6,7 @@ from time import sleep
 from requests_futures import sessions
 
 
-API_TOKEN = '5686307192:AAGWxHH_auacIqrN6gXK2F3cBKJnpFqdXyg'
+API_TOKEN = ''
 GENERATED_CODE_LENGTH = 16
 # закомментированное для дебага
 CREATE_NEW_CODE_END_POINT = 'https://lk.cryptospread.net/create_code_for_user'
